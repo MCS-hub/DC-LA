@@ -17,7 +17,7 @@ def prox_l2(x, alpha):
 
 def prox_l1_minus_l2(y, alpha, epsilon=1.0):
     """
-    Prox of r_alpha(x) = ||x||_1 - alpha * ||x||_2 at y, parameter lam > 0.
+    Prox of r_epsilon(x) = ||x||_1 - epsilon * ||x||_2 at y, parameter lam > 0.
     Implements Lemma 1 (Lou & Yan, 2016).
     """
     y = np.asarray(y, dtype=float)
