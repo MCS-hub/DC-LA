@@ -44,15 +44,6 @@ def main():
                 samples_ula_last = []
                 samples_dcla_last = []
                 samples_psgla_last = []
-                # for _ in range(n_chains):
-                #     X0 = np.random.randn(d)
-                #     samples_ula = ULA(X0, n_samples, burn_in, lam, gamma, d, grad_f=grad_f, prox_r1=prox_r1, prox_r2=prox_r2)
-                #     samples_dcla = DC_LA(X0, n_samples, burn_in, lam, gamma, d, grad_f=grad_f, prox_r1=prox_r1, prox_r2=prox_r2)
-                #     samples_psgla = PSGLA(X0, n_samples, burn_in, gamma, d, grad_f=grad_f, prox_r=prox_r)
-                #     samples_ula_last.append(samples_ula[-1])
-                #     samples_dcla_last.append(samples_dcla[-1])
-                #     samples_psgla_last.append(samples_psgla[-1])
-
 
                 def run_chain_once(d, n_samples, burn_in, lam, gamma, grad_f, prox_r1, prox_r2, prox_r):
                     X0 = np.random.randn(d)
@@ -94,8 +85,6 @@ def main():
                 val, err = dblquad(lambda x2, x1: pi_unnormalized_2d(x1, x2),
                                 -xlim1, xlim2,  # x1 range
                                 lambda _: -xlim1, lambda _: xlim2)  # x2 range
-
-                print("Integral ≈", val, " with error ≈", err)
 
                 def pi_normalized(x):
                     return np.exp(-V(x))/val
@@ -155,9 +144,6 @@ def main():
                 fig.subplots_adjust(right=0.8)
                 cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
                 fig.colorbar(im3, cax=cbar_ax)
-
-                #fig.colorbar(im3, ax=axs[1,0])
-                # plt.tight_layout()
 
                 # Layout adjustments
                 #plt.tight_layout()

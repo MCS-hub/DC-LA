@@ -1,63 +1,49 @@
 import numpy as np
 from sklearn.linear_model import LassoCV
 import matplotlib.pyplot as plt
-from utils import prox_l1_minus_l2, prox_l1, prox_l2, partial_dct_matrix
+import argparse
+from utils import oversampled_dct_matrix, prox_l1_minus_l2, prox_l1, prox_l2, partial_dct_matrix, oversampled_dct_matrix, generate_sparse_vector, plot_ci_comparison 
 from sampling_algs import PSGLA, DC_LA, ULA
 from sklearn.decomposition import PCA
 
 np.random.seed(42)
 
-def rel_err(xhat, xtrue):
-    return np.linalg.norm(xhat - xtrue)**2 / np.linalg.norm(xtrue)**2
-
-def plot_ci_comparison(samples_dict, x_true, indices, save_path, title_suffix=""):
-    """
-    Plot 95% confidence intervals across given indices
-    for multiple samplers side by side.
-    
-    samples_dict: dict of {label: samples}
-    x_true: true vector
-    indices: list/array of dimensions to plot
-    """
-    dims = np.arange(len(indices))
-
-    fig, axes = plt.subplots(1, len(samples_dict), figsize=(18, 5), sharey=True)
-
-    for ax, (label, samples) in zip(axes, samples_dict.items()):
-        lower = np.percentile(samples[:, indices], 2.5, axis=0)
-        upper = np.percentile(samples[:, indices], 97.5, axis=0)
-        mean_est = np.mean(samples[:, indices], axis=0)
-        true_vals = x_true[indices]
-
-        ax.fill_between(dims, lower, upper, color="skyblue", alpha=0.4, label="95% CI")
-        ax.plot(dims, mean_est, "b--", label="Posterior mean")
-        ax.plot(dims, true_vals, "r-", label="True x*")
-
-        ax.set_title(f"{label} {title_suffix}")
-        ax.set_xlabel("Index within selected set")
-
-    axes[0].set_ylabel("Value")
-    axes[0].legend()
-
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.show()
-
+parser =argparse.ArgumentParser()
+parser.add_argument('--sensing', type=str, default='pdct', choices=['pdct', 'odct', 'gaussian'], help='type of sensing matrix')
+parser.add_argument('--oversample_factor', type=int, default=5, help='oversampling factor for oversampled DCT')
+args = parser.parse_args()
+sensing = args.sensing
+F = args.oversample_factor
 
 def main():
     # dimensions
     d, m, k = 2000, 200, 15
     sigma = 0.01  # noise std
 
-    # sensing matrix (Gaussian, column norms ~1)
-    # A = np.random.randn(m, d) / np.sqrt(m) 
 
-    A = partial_dct_matrix(m, d)
-
-    # k-sparse ground truth
-    x_true = np.zeros(d)
-    supp = np.random.choice(d, k, replace=False)
-    x_true[supp] = np.random.randn(k)
+    if sensing == 'gaussian':
+        A = np.random.randn(m, d) / np.sqrt(m)
+        x_true = np.zeros(d)
+        supp = np.random.choice(d, k, replace=False)
+        x_true[supp] = np.random.randn(k)
+        fig_name_support = "figs/l12/exp_cs/ci_support_comparison_gaussian.png"
+        fig_name_zero = "figs/l12/exp_cs/ci_zero_comparison_gaussian.png"
+    elif sensing == 'pdct':
+        A = partial_dct_matrix(m, d)
+        # k-sparse ground truth
+        x_true = np.zeros(d)
+        supp = np.random.choice(d, k, replace=False)
+        x_true[supp] = np.random.randn(k)
+        fig_name_support = "figs/l12/exp_cs/ci_support_comparison_pdct.png"
+        fig_name_zero = "figs/l12/exp_cs/ci_zero_comparison_pdct.png"
+    elif sensing == 'odct':
+        L = 2 * F
+        A = oversampled_dct_matrix(m, d, F)
+        x_true, supp = generate_sparse_vector(d, k, L)
+        fig_name_support = f"figs/l12/exp_cs/ci_support_comparison_overdctF{F}.png"
+        fig_name_zero = f"figs/l12/exp_cs/ci_zero_comparison_overdctF{F}.png"
+    else:
+        raise ValueError("Unknown sensing type")
 
     # data
     y = A @ x_true + sigma * np.random.randn(m)
@@ -97,21 +83,23 @@ def main():
     }
 
     plt.rcParams.update({
-    "font.size": 16,        # controls default text size
-    "axes.titlesize": 18,   # fontsize of axes title
-    "axes.labelsize": 16,   # fontsize of x and y labels
-    "xtick.labelsize": 14,  # fontsize of the x tick labels
-    "ytick.labelsize": 14,  # fontsize of the y tick labels
-    "legend.fontsize": 14   # fontsize of the legend
+    "font.size": 16,       
+    "axes.titlesize": 18,   
+    "axes.labelsize": 16,  
+    "xtick.labelsize": 14, 
+    "ytick.labelsize": 14,  
+    "legend.fontsize": 14
     })
+
+    
     plot_ci_comparison(samples_dict, x_true, supp, 
-                   "figs/l12/exp_cs/ci_support_comparison_dct.png", 
+                   fig_name_support, 
                    title_suffix="CI on Support")
     zero_indices = np.setdiff1d(np.arange(d), supp)
+    
     plot_ci_comparison(samples_dict, x_true, zero_indices[:50], 
-                    "figs/l12/exp_cs/ci_zero_comparison_dct.png", 
+                    fig_name_zero, 
                     title_suffix="CI on Zero Coords (subset)")
-
 
 if __name__ == "__main__":
     main()

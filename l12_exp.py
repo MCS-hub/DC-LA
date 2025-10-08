@@ -7,17 +7,17 @@ from utils import l1, prox_l1, l2, prox_l2, prox_l1_minus_l2
 from sampling_algs import DC_LA, ULA, PSGLA
 np.random.seed(42)
 
-# simple comparison between ULA and PSGLA_DCreg on 2D Gaussian with L1-L2 regularization
+# single chain
 def main():
     d = 2
-    mu_x_list = [0, 1, 2]
+    mu_x_list = [0, 1, 2, 3]
     Sigma_x_list = [np.array([[1,0],[0,1]]), np.array([[1, 0.8], [0.8, 1]]), np.array([[1, -0.8], [-0.8, 2]])]
     tau_list = [10, 15]
 
     lam, gamma = 0.01, 0.005
     n_samples = 10000
     burn_in = 500
-    X0 = np.zeros(d)
+    X0 = np.random.randn(d)
 
     for tau in tau_list:
         for mu_x in mu_x_list:
@@ -62,7 +62,6 @@ def main():
                                 -xlim1, xlim2,  # x1 range
                                 lambda _: -xlim1, lambda _: xlim2)  # x2 range
 
-                print("Integral ≈", val, " with error ≈", err)
 
                 def pi_normalized(x):
                     return np.exp(-V(x))/val
@@ -75,14 +74,12 @@ def main():
                 f_vec = np.vectorize(lambda x, y: pi_normalized(np.array([x, y])))
                 Z = f_vec(X1, X2)
 
-                #print("integral of pi: ", np.sum(Z) * (x1[1]-x1[0]) * (x2[1]-x2[0]))  # should be close to 1
             
-                # Bins (centers/edges you already defined)
+                # Bins 
                 xbin = np.linspace(-xlim1, xlim2, 100)
                 ybin = np.linspace(-xlim1, xlim2, 100)
 
                 # --- common vmin/vmax across all panels ---
-                # Z is your target density grid
                 vmin = float(np.min(Z))
                 vmax = float(np.max(Z))
 
