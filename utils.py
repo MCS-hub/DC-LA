@@ -99,46 +99,6 @@ def generate_sparse_vector(n, k, L):
     support.sort()
     return x, np.array(support)
 
-# to check------
-def prox_sigma_q(y, alpha, q):
-    """
-    Proximal operator of alpha * ||.||_{sigma_q},
-    where ||x||_{sigma_q} = sum of q largest magnitudes of x.
-    """
-    y = np.asarray(y, dtype=float)
-    abs_y = np.abs(y)
-    # Indices of q largest entries
-    idx = np.argsort(-abs_y)[:q]
-    x = np.array(y, copy=True)
-    # Apply soft-thresholding only on top-q entries
-    x[idx] = np.sign(y[idx]) * np.maximum(abs_y[idx] - alpha, 0.0)
-    return x
-
-
-def prox_l1_minus_sigma_q(y, alpha, q):
-    """
-    Proximal operator of alpha * (||.||_1 - ||.||_{sigma_q}).
-    Equivalent to soft-thresholding everywhere except we keep q indices
-    (with largest scores) unpenalized.
-    """
-    y = np.asarray(y, dtype=float)
-    abs_y = np.abs(y)
-
-    # Score function: cost saved by leaving i unpenalized
-    scores = np.where(
-        abs_y <= alpha,
-        0.5 * abs_y**2,
-        alpha * abs_y - 0.5 * alpha**2
-    )
-
-    # Pick q indices with largest scores (unpenalized)
-    idx = np.argsort(-scores)[:q]
-
-    # Apply soft-thresholding everywhere
-    x = prox_l1(y, alpha)
-    # Restore unpenalized coordinates to original values
-    x[idx] = y[idx]
-    return x
 
 def plot_ci_comparison(samples_dict, x_true, indices, save_path, title_suffix=""):
     """
