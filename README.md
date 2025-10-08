@@ -9,7 +9,19 @@ python l12_exp2.py
 ```bash
 python l12_exp.py
 ```
-## Compressed Sensing experiment
+## Compressed Sensing experiments
+
+Gaussian sensing matrix
 ```bash
-python CS_exp.py
+python CS_exp.py --sensing gaussian
+```
+
+Partial DCT sensing matrix
+```bash
+python CS_exp.py --sensing pdct
+```
+
+Oversampled DCT sensing matrix with oversample factor being, e.g., 5
+```bash
+python CS_exp.py --sensing odct --oversample_factor 5
 ```
