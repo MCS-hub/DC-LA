@@ -131,14 +131,14 @@ def main():
                 plt.show()
                 plt.savefig(figname, bbox_inches="tight", dpi=600)
 
-                np.save(f"results/l12/exp1/samples_dcla_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
-                        samples_dcla)
-                np.save(f"results/l12/exp1/samples_ula_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
-                        samples_ula)
-                np.save(f"results/l12/exp1/samples_psgla_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
-                        samples_psgla)
-                np.save(f"results/l12/exp1/Z_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
-                        Z)
+                # np.save(f"results/l12/exp1/samples_dcla_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
+                #         samples_dcla)
+                # np.save(f"results/l12/exp1/samples_ula_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
+                #         samples_ula)
+                # np.save(f"results/l12/exp1/samples_psgla_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
+                #         samples_psgla)
+                # np.save(f"results/l12/exp1/Z_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.npy",
+                #         Z)
 
 
 if __name__ == "__main__":
