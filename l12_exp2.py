@@ -149,20 +149,20 @@ def main():
                 #plt.tight_layout()
                 plt.savefig(figname, bbox_inches="tight", dpi=600)
 
-                results = {
-                    "samples_dcla_last": samples_dcla_last,
-                    "samples_ula_last": samples_ula_last,
-                    "samples_psgla_last": samples_psgla_last,
-                    "Z": Z,
-                    "mu_x": mu_x,
-                    "Sigma_x": Sigma_x,
-                    "tau": tau,
-                }
+                # results = {
+                #     "samples_dcla_last": samples_dcla_last,
+                #     "samples_ula_last": samples_ula_last,
+                #     "samples_psgla_last": samples_psgla_last,
+                #     "Z": Z,
+                #     "mu_x": mu_x,
+                #     "Sigma_x": Sigma_x,
+                #     "tau": tau,
+                # }
 
-                # Save to pickle
-                fname = f"results/l12/exp2/exp2_results_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.pkl"
-                with open(fname, "wb") as f:
-                    pickle.dump(results, f)
+                # # Save to pickle
+                # fname = f"results/l12/exp2/exp2_results_mu{mu_x}_Sigma{Sigma_x[0,1]}_tau{tau}.pkl"
+                # with open(fname, "wb") as f:
+                #     pickle.dump(results, f)
                 
 if __name__ == "__main__":
     main()
